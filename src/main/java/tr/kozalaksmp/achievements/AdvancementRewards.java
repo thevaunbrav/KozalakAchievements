@@ -44,7 +44,7 @@ public final class AdvancementRewards implements Listener, CommandExecutor {
             org.bukkit.Material.END_STONE, org.bukkit.Material.IRON_SWORD,
             org.bukkit.Material.WHEAT
     };
-    private static final int[] CATEGORY_SLOTS = {11, 13, 15, 29, 33};
+    private static final int[] CATEGORY_SLOTS = {20, 22, 24, 30, 32};
     private final JavaPlugin plugin;
     private final File ledgerFile;
     private final YamlConfiguration ledger;
@@ -341,7 +341,10 @@ public final class AdvancementRewards implements Listener, CommandExecutor {
                 Component.text("✦ Maceracının Günlüğü ✦", NamedTextColor.DARK_GREEN));
         holder.inventory = inventory;
         decorate(inventory);
-        inventory.setItem(4, navigation(org.bukkit.Material.WRITABLE_BOOK, "Maceracının Günlüğü"));
+        inventory.setItem(4, navigation(org.bukkit.Material.MAP, "Kozalak SMP • Macera Haritası"));
+        // A connected route between the five category markers.
+        for (int slot : new int[]{21, 23, 31})
+            inventory.setItem(slot, navigation(org.bukkit.Material.BROWN_STAINED_GLASS_PANE, "• Keşif yolu •"));
         List<Advancement> all = new ArrayList<>();
         for (int i = 0; i < CATEGORIES.length; i++) {
             List<Advancement> entries = inCategory(i);
@@ -361,7 +364,7 @@ public final class AdvancementRewards implements Listener, CommandExecutor {
         ItemStack summary = navigation(org.bukkit.Material.NETHER_STAR,
                 "Toplam ilerleme: " + totalDone + "/" + all.size());
         inventory.setItem(49, summary);
-        inventory.setItem(45, navigation(org.bukkit.Material.SPRUCE_SAPLING, "Kozalak SMP • Macera seni bekliyor"));
+        inventory.setItem(45, navigation(org.bukkit.Material.COMPASS, "Kozalak SMP • Macera seni bekliyor"));
         player.openInventory(inventory);
     }
 
@@ -374,7 +377,7 @@ public final class AdvancementRewards implements Listener, CommandExecutor {
                 Component.text("✦ " + CATEGORY_NAMES[category] + " • " + (page + 1) + "/" + (maxPage + 1), NamedTextColor.DARK_GREEN));
         holder.inventory = inventory;
         decorate(inventory);
-        inventory.setItem(4, navigation(org.bukkit.Material.WRITABLE_BOOK, CATEGORY_NAMES[category] + " • Macera sayfası"));
+        inventory.setItem(4, navigation(org.bukkit.Material.MAP, CATEGORY_NAMES[category] + " • Başarım haritası"));
         int start = page * PAGE_SIZE;
         for (int i = start; i < Math.min(all.size(), start + PAGE_SIZE); i++) {
             Advancement advancement = all.get(i);
