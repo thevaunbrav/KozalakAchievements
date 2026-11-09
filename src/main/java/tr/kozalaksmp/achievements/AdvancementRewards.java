@@ -87,60 +87,146 @@ public final class AdvancementRewards implements Listener, CommandExecutor {
         return result;
     }
 
-    // Rewards are based on actual advancement identifiers, not translated titles.
-    // Every vanilla advancement is included; unlisted advancements receive a
-    // category/frame baseline and the exceptionally difficult ones are overridden.
-    private static final java.util.Map<String, Integer> SPECIAL_REWARDS = java.util.Map.ofEntries(
-            java.util.Map.entry("nether/all_effects", 300),          // How Did We Get Here?
-            java.util.Map.entry("adventure/adventuring_time", 250),
-            java.util.Map.entry("husbandry/balanced_diet", 225),
-            java.util.Map.entry("adventure/arbalistic", 200),
-            java.util.Map.entry("adventure/kill_all_mobs", 200),
-            java.util.Map.entry("husbandry/complete_catalogue", 175),
-            java.util.Map.entry("husbandry/bred_all_animals", 175),
-            java.util.Map.entry("nether/explore_nether", 150),
-            java.util.Map.entry("nether/uneasy_alliance", 150),
-            java.util.Map.entry("nether/ride_strider_in_overworld_lava", 140),
-            java.util.Map.entry("nether/create_full_beacon", 130),
-            java.util.Map.entry("end/levitate", 120),
-            java.util.Map.entry("adventure/two_birds_one_arrow", 110),
-            java.util.Map.entry("adventure/very_very_frightening", 90),
-            java.util.Map.entry("adventure/sniper_duel", 90),
-            java.util.Map.entry("adventure/bullseye", 100),
-            java.util.Map.entry("nether/return_to_sender", 90),
-            java.util.Map.entry("nether/fast_travel", 85),
-            java.util.Map.entry("end/dragon_egg", 85),
-            java.util.Map.entry("end/elytra", 75),
-            java.util.Map.entry("end/kill_dragon", 75),
-            java.util.Map.entry("nether/summon_wither", 75),
-            java.util.Map.entry("nether/obtain_blaze_rod", 35),
-            java.util.Map.entry("story/mine_diamond", 20),
-            java.util.Map.entry("story/enter_the_nether", 25),
-            java.util.Map.entry("story/smelt_iron", 10),
-            java.util.Map.entry("story/mine_stone", 5),
+    // Individually curated rewards: time, resources, exploration, luck and skill.
+    // New vanilla IDs are logged so they can be evaluated rather than silently
+    // receiving the same category-wide reward as unrelated advancements.
+    private static final java.util.Map<String, Integer> REWARDS = java.util.Map.ofEntries(
             java.util.Map.entry("story/root", 5),
+            java.util.Map.entry("story/mine_stone", 5),
+            java.util.Map.entry("story/upgrade_tools", 7),
+            java.util.Map.entry("story/smelt_iron", 10),
+            java.util.Map.entry("story/obtain_armor", 12),
+            java.util.Map.entry("story/lava_bucket", 15),
+            java.util.Map.entry("story/iron_tools", 15),
+            java.util.Map.entry("story/deflect_arrow", 18),
+            java.util.Map.entry("story/form_obsidian", 20),
+            java.util.Map.entry("story/mine_diamond", 24),
+            java.util.Map.entry("story/enter_the_nether", 30),
+            java.util.Map.entry("story/shiny_gear", 35),
+            java.util.Map.entry("story/enchant_item", 28),
+            java.util.Map.entry("story/cure_zombie_villager", 65),
+            java.util.Map.entry("story/follow_ender_eye", 45),
+            java.util.Map.entry("story/enter_the_end", 55),
             java.util.Map.entry("nether/root", 5),
+            java.util.Map.entry("nether/return_to_sender", 95),
+            java.util.Map.entry("nether/find_bastion", 35),
+            java.util.Map.entry("nether/obtain_ancient_debris", 55),
+            java.util.Map.entry("nether/fast_travel", 100),
+            java.util.Map.entry("nether/find_fortress", 35),
+            java.util.Map.entry("nether/obtain_crying_obsidian", 18),
+            java.util.Map.entry("nether/distract_piglin", 12),
+            java.util.Map.entry("nether/ride_strider", 30),
+            java.util.Map.entry("nether/ride_strider_in_overworld_lava", 145),
+            java.util.Map.entry("nether/explore_nether", 190),
+            java.util.Map.entry("nether/loot_bastion", 45),
+            java.util.Map.entry("nether/use_lodestone", 40),
+            java.util.Map.entry("nether/netherite_armor", 125),
+            java.util.Map.entry("nether/get_wither_skull", 65),
+            java.util.Map.entry("nether/obtain_blaze_rod", 35),
+            java.util.Map.entry("nether/charge_respawn_anchor", 35),
+            java.util.Map.entry("nether/summon_wither", 95),
+            java.util.Map.entry("nether/brew_potion", 25),
+            java.util.Map.entry("nether/all_potions", 155),
+            java.util.Map.entry("nether/all_effects", 300),
+            java.util.Map.entry("nether/create_beacon", 90),
+            java.util.Map.entry("nether/create_full_beacon", 170),
+            java.util.Map.entry("nether/uneasy_alliance", 180),
             java.util.Map.entry("end/root", 5),
+            java.util.Map.entry("end/kill_dragon", 95),
+            java.util.Map.entry("end/dragon_egg", 105),
+            java.util.Map.entry("end/enter_end_gateway", 65),
+            java.util.Map.entry("end/respawn_dragon", 110),
+            java.util.Map.entry("end/dragon_breath", 45),
+            java.util.Map.entry("end/find_end_city", 75),
+            java.util.Map.entry("end/elytra", 85),
+            java.util.Map.entry("end/levitate", 135),
             java.util.Map.entry("adventure/root", 5),
-            java.util.Map.entry("husbandry/root", 5)
+            java.util.Map.entry("adventure/sleep_in_bed", 8),
+            java.util.Map.entry("adventure/trade", 15),
+            java.util.Map.entry("adventure/kill_a_mob", 10),
+            java.util.Map.entry("adventure/shoot_arrow", 12),
+            java.util.Map.entry("adventure/throw_trident", 35),
+            java.util.Map.entry("adventure/summon_iron_golem", 35),
+            java.util.Map.entry("adventure/totem_of_undying", 65),
+            java.util.Map.entry("adventure/adventuring_time", 260),
+            java.util.Map.entry("adventure/kill_all_mobs", 245),
+            java.util.Map.entry("adventure/sniper_duel", 110),
+            java.util.Map.entry("adventure/very_very_frightening", 95),
+            java.util.Map.entry("adventure/arbalistic", 220),
+            java.util.Map.entry("adventure/two_birds_one_arrow", 130),
+            java.util.Map.entry("adventure/bullseye", 120),
+            java.util.Map.entry("adventure/hero_of_the_village", 75),
+            java.util.Map.entry("adventure/voluntary_exile", 35),
+            java.util.Map.entry("adventure/trade_at_world_height", 130),
+            java.util.Map.entry("adventure/play_jukebox_in_meadows", 45),
+            java.util.Map.entry("adventure/walk_on_powder_snow_with_leather_boots", 18),
+            java.util.Map.entry("adventure/light_ning_rod", 35),
+            java.util.Map.entry("adventure/lightning_rod_with_villager_no_fire", 50),
+            java.util.Map.entry("adventure/avoid_vibration", 35),
+            java.util.Map.entry("adventure/fall_from_world_height", 100),
+            java.util.Map.entry("adventure/read_power_from_chiseled_bookshelf", 15),
+            java.util.Map.entry("adventure/craft_decorated_pot_using_only_sherds", 50),
+            java.util.Map.entry("adventure/salvage_sherd", 25),
+            java.util.Map.entry("adventure/trim_with_any_armor_pattern", 35),
+            java.util.Map.entry("adventure/trim_with_all_exclusive_armor_patterns", 195),
+            java.util.Map.entry("adventure/use_lodestone", 40),
+            java.util.Map.entry("adventure/spyglass_at_parrot", 25),
+            java.util.Map.entry("adventure/spyglass_at_ghast", 45),
+            java.util.Map.entry("adventure/spyglass_at_dragon", 100),
+            java.util.Map.entry("adventure/ride_a_boat_with_a_goat", 30),
+            java.util.Map.entry("adventure/use_wind_charge", 30),
+            java.util.Map.entry("adventure/under_lock_and_key", 45),
+            java.util.Map.entry("adventure/blowback", 110),
+            java.util.Map.entry("adventure/overoverkill", 130),
+            java.util.Map.entry("adventure/who_needs_rockets", 100),
+            java.util.Map.entry("adventure/heart_transplanter", 90),
+            java.util.Map.entry("husbandry/root", 5),
+            java.util.Map.entry("husbandry/plant_seed", 7),
+            java.util.Map.entry("husbandry/breed_an_animal", 12),
+            java.util.Map.entry("husbandry/tame_an_animal", 15),
+            java.util.Map.entry("husbandry/fishy_business", 12),
+            java.util.Map.entry("husbandry/tactical_fishing", 22),
+            java.util.Map.entry("husbandry/safely_harvest_honey", 25),
+            java.util.Map.entry("husbandry/silk_touch_nest", 35),
+            java.util.Map.entry("husbandry/wax_on", 25),
+            java.util.Map.entry("husbandry/wax_off", 28),
+            java.util.Map.entry("husbandry/axolotl_in_a_bucket", 25),
+            java.util.Map.entry("husbandry/kill_axolotl_target", 65),
+            java.util.Map.entry("husbandry/make_a_sign_glow", 15),
+            java.util.Map.entry("husbandry/ride_a_boat_with_a_goat", 30),
+            java.util.Map.entry("husbandry/balanced_diet", 245),
+            java.util.Map.entry("husbandry/bred_all_animals", 205),
+            java.util.Map.entry("husbandry/complete_catalogue", 190),
+            java.util.Map.entry("husbandry/froglights", 120),
+            java.util.Map.entry("husbandry/leash_all_frog_variants", 75),
+            java.util.Map.entry("husbandry/obtain_netherite_hoe", 90),
+            java.util.Map.entry("husbandry/break_diamond_hoe", 90),
+            java.util.Map.entry("husbandry/eat_cake", 10),
+            java.util.Map.entry("husbandry/breed_all_frogs", 70),
+            java.util.Map.entry("husbandry/tadpole_in_a_bucket", 20),
+            java.util.Map.entry("husbandry/plant_any_sniffer_seed", 40),
+            java.util.Map.entry("husbandry/feed_snifflet", 30),
+            java.util.Map.entry("husbandry/obtain_sniffer_egg", 55),
+            java.util.Map.entry("husbandry/allay_deliver_item_to_player", 55),
+            java.util.Map.entry("husbandry/allay_deliver_cake_to_note_block", 80),
+            java.util.Map.entry("husbandry/repair_wolf_armor", 35),
+            java.util.Map.entry("husbandry/remove_wolf_armor", 20),
+            java.util.Map.entry("husbandry/whole_pack", 135),
+            java.util.Map.entry("husbandry/place_dried_ghast_in_water", 30),
+            java.util.Map.entry("husbandry/dried_ghast_in_water", 30),
+            java.util.Map.entry("husbandry/happy_ghast", 55),
+            java.util.Map.entry("husbandry/craft_harness", 20)
     );
+    private final java.util.Set<String> unknownAdvancements = new java.util.HashSet<>();
 
     private int points(Advancement advancement) {
-        AdvancementDisplay display = advancement.getDisplay();
-        if (display == null) return 0;
         String key = advancement.getKey().getKey();
-        Integer special = SPECIAL_REWARDS.get(key);
-        if (special != null) return special;
-        int baseline = switch (display.frame()) {
-            case CHALLENGE -> 100;
-            case GOAL -> 45;
-            case TASK -> 15;
-        };
-        if (key.startsWith("end/")) baseline += 15;
-        else if (key.startsWith("nether/")) baseline += 10;
-        else if (key.startsWith("adventure/")) baseline += 10;
-        else if (key.startsWith("husbandry/")) baseline += 5;
-        return Math.max(5, Math.min(200, baseline));
+        Integer reward = REWARDS.get(key);
+        if (reward != null) return reward;
+        if (unknownAdvancements.add(key))
+            plugin.getLogger().warning("Yeni veya fiyatlandirilmamis basarim: " + key
+                    + " (gecici 5 Puan). Listeye ozel deger ekleyin.");
+        return 5;
     }
 
     private String ledgerKey(Player player, Advancement advancement) {
