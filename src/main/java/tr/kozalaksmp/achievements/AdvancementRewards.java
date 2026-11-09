@@ -87,19 +87,60 @@ public final class AdvancementRewards implements Listener, CommandExecutor {
         return result;
     }
 
+    // Rewards are based on actual advancement identifiers, not translated titles.
+    // Every vanilla advancement is included; unlisted advancements receive a
+    // category/frame baseline and the exceptionally difficult ones are overridden.
+    private static final java.util.Map<String, Integer> SPECIAL_REWARDS = java.util.Map.ofEntries(
+            java.util.Map.entry("nether/all_effects", 300),          // How Did We Get Here?
+            java.util.Map.entry("adventure/adventuring_time", 250),
+            java.util.Map.entry("husbandry/balanced_diet", 225),
+            java.util.Map.entry("adventure/arbalistic", 200),
+            java.util.Map.entry("adventure/kill_all_mobs", 200),
+            java.util.Map.entry("husbandry/complete_catalogue", 175),
+            java.util.Map.entry("husbandry/bred_all_animals", 175),
+            java.util.Map.entry("nether/explore_nether", 150),
+            java.util.Map.entry("nether/uneasy_alliance", 150),
+            java.util.Map.entry("nether/ride_strider_in_overworld_lava", 140),
+            java.util.Map.entry("nether/create_full_beacon", 130),
+            java.util.Map.entry("end/levitate", 120),
+            java.util.Map.entry("adventure/two_birds_one_arrow", 110),
+            java.util.Map.entry("adventure/very_very_frightening", 90),
+            java.util.Map.entry("adventure/sniper_duel", 90),
+            java.util.Map.entry("adventure/bullseye", 100),
+            java.util.Map.entry("nether/return_to_sender", 90),
+            java.util.Map.entry("nether/fast_travel", 85),
+            java.util.Map.entry("end/dragon_egg", 85),
+            java.util.Map.entry("end/elytra", 75),
+            java.util.Map.entry("end/kill_dragon", 75),
+            java.util.Map.entry("nether/summon_wither", 75),
+            java.util.Map.entry("nether/obtain_blaze_rod", 35),
+            java.util.Map.entry("story/mine_diamond", 20),
+            java.util.Map.entry("story/enter_the_nether", 25),
+            java.util.Map.entry("story/smelt_iron", 10),
+            java.util.Map.entry("story/mine_stone", 5),
+            java.util.Map.entry("story/root", 5),
+            java.util.Map.entry("nether/root", 5),
+            java.util.Map.entry("end/root", 5),
+            java.util.Map.entry("adventure/root", 5),
+            java.util.Map.entry("husbandry/root", 5)
+    );
+
     private int points(Advancement advancement) {
         AdvancementDisplay display = advancement.getDisplay();
         if (display == null) return 0;
-        return switch (display.frame()) {
-            case CHALLENGE -> 30;
-            case GOAL -> 20;
-            case TASK -> {
-                String key = advancement.getKey().getKey();
-                if (key.startsWith("end/") || key.startsWith("nether/")) yield 10;
-                if (key.startsWith("adventure/") || key.startsWith("husbandry/")) yield 5;
-                yield 3;
-            }
+        String key = advancement.getKey().getKey();
+        Integer special = SPECIAL_REWARDS.get(key);
+        if (special != null) return special;
+        int baseline = switch (display.frame()) {
+            case CHALLENGE -> 100;
+            case GOAL -> 45;
+            case TASK -> 15;
         };
+        if (key.startsWith("end/")) baseline += 15;
+        else if (key.startsWith("nether/")) baseline += 10;
+        else if (key.startsWith("adventure/")) baseline += 10;
+        else if (key.startsWith("husbandry/")) baseline += 5;
+        return Math.max(5, Math.min(200, baseline));
     }
 
     private String ledgerKey(Player player, Advancement advancement) {
