@@ -95,7 +95,7 @@ public final class AdvancementRewards implements Listener, CommandExecutor {
             java.util.Map.entry("story/mine_stone", 5),
             java.util.Map.entry("story/upgrade_tools", 7),
             java.util.Map.entry("story/smelt_iron", 10),
-            java.util.Map.entry("story/obtain_armor", 12),
+            java.util.Map.entry("story/obtain_armor", 25),
             java.util.Map.entry("story/lava_bucket", 15),
             java.util.Map.entry("story/iron_tools", 15),
             java.util.Map.entry("story/deflect_arrow", 18),
