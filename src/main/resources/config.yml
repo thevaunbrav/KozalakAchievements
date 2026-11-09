@@ -1,0 +1,3 @@
+# Kaynak paketini oyunculara yukleyip test ettikten sonra true yapin.
+# Paket yoksa ozel font karakterleri eksik gorunebilir.
+custom-map-font: false
