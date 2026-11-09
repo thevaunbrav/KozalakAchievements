@@ -2,6 +2,7 @@ package tr.kozalaksmp.achievements;
 
 import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -45,6 +46,7 @@ public final class AdvancementRewards implements Listener, CommandExecutor {
             org.bukkit.Material.WHEAT
     };
     private static final int[] CATEGORY_SLOTS = {20, 22, 24, 30, 32};
+    private static final Key MAP_FONT = Key.key("kozalak", "gui");
     private final JavaPlugin plugin;
     private final File ledgerFile;
     private final YamlConfiguration ledger;
@@ -335,10 +337,16 @@ public final class AdvancementRewards implements Listener, CommandExecutor {
         return count;
     }
 
+    private Component mapTitle(String fallback, boolean categories) {
+        if (!plugin.getConfig().getBoolean("custom-map-font", false))
+            return Component.text(fallback, NamedTextColor.DARK_GREEN);
+        return Component.text(categories ? "\uE101" : "\uE102").font(MAP_FONT);
+    }
+
     private void openCategories(Player player) {
         PageHolder holder = new PageHolder(-1, 0);
         Inventory inventory = Bukkit.createInventory(holder, 54,
-                Component.text("✦ Maceracının Günlüğü ✦", NamedTextColor.DARK_GREEN));
+                mapTitle("✦ Maceracının Günlüğü ✦", true));
         holder.inventory = inventory;
         decorate(inventory);
         inventory.setItem(4, navigation(org.bukkit.Material.MAP, "Kozalak SMP • Macera Haritası"));
@@ -374,7 +382,7 @@ public final class AdvancementRewards implements Listener, CommandExecutor {
         int page = Math.max(0, Math.min(maxPage, requestedPage));
         PageHolder holder = new PageHolder(category, page);
         Inventory inventory = Bukkit.createInventory(holder, 54,
-                Component.text("✦ " + CATEGORY_NAMES[category] + " • " + (page + 1) + "/" + (maxPage + 1), NamedTextColor.DARK_GREEN));
+                mapTitle("✦ " + CATEGORY_NAMES[category] + " • " + (page + 1) + "/" + (maxPage + 1), false));
         holder.inventory = inventory;
         decorate(inventory);
         inventory.setItem(4, navigation(org.bukkit.Material.MAP, CATEGORY_NAMES[category] + " • Başarım haritası"));
