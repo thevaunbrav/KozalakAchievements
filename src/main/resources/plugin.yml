@@ -1,0 +1,11 @@
+name: KozalakAchievements
+version: 1.0.0
+main: tr.kozalaksmp.achievements.KozalakAchievements
+api-version: '26.2'
+author: thevaunbrav
+depend: [PlayerPoints]
+commands:
+  basarimlar:
+    description: Minecraft basarim gunlugunu acar
+    usage: /basarimlar
+    aliases: [başarımlar, basarımlar]
