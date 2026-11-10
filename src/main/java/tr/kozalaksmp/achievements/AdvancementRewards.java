@@ -337,16 +337,25 @@ public final class AdvancementRewards implements Listener, CommandExecutor {
         return count;
     }
 
-    private Component mapTitle(String fallback, boolean categories) {
+    private Component mapTitle(String fallback, int category) {
         if (!plugin.getConfig().getBoolean("custom-map-font", false))
             return Component.text(fallback, NamedTextColor.DARK_GREEN);
-        return Component.text(categories ? "\uE101" : "\uE102").font(MAP_FONT);
+        // Glyphs match assets/kozalak/font/gui.json in the atlas resource pack.
+        String glyph = category < 0 ? "\uE101" : switch (category) {
+            case 0 -> "\uE102"; // Minecraft
+            case 1 -> "\uE103"; // Nether
+            case 2 -> "\uE104"; // The End
+            case 3 -> "\uE105"; // Macera
+            case 4 -> "\uE106"; // Ciftcilik
+            default -> "\uE101";
+        };
+        return Component.text(glyph).font(MAP_FONT);
     }
 
     private void openCategories(Player player) {
         PageHolder holder = new PageHolder(-1, 0);
         Inventory inventory = Bukkit.createInventory(holder, 54,
-                mapTitle("✦ Maceracının Günlüğü ✦", true));
+                mapTitle("✦ Maceracının Günlüğü ✦", -1));
         holder.inventory = inventory;
         decorate(inventory);
         inventory.setItem(4, navigation(org.bukkit.Material.MAP, "Kozalak SMP • Macera Haritası"));
@@ -382,7 +391,7 @@ public final class AdvancementRewards implements Listener, CommandExecutor {
         int page = Math.max(0, Math.min(maxPage, requestedPage));
         PageHolder holder = new PageHolder(category, page);
         Inventory inventory = Bukkit.createInventory(holder, 54,
-                mapTitle("✦ " + CATEGORY_NAMES[category] + " • " + (page + 1) + "/" + (maxPage + 1), false));
+                mapTitle("✦ " + CATEGORY_NAMES[category] + " • " + (page + 1) + "/" + (maxPage + 1), category));
         holder.inventory = inventory;
         decorate(inventory);
         inventory.setItem(4, navigation(org.bukkit.Material.MAP, CATEGORY_NAMES[category] + " • Başarım haritası"));
