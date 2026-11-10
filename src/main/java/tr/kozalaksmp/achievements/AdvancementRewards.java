@@ -36,8 +36,8 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 public final class AdvancementRewards implements Listener, CommandExecutor {
-    private static final int PAGE_SIZE = 28;
-    private static final int[] ENTRY_SLOTS = {10,11,12,13,14,15,16,19,20,21,22,23,24,25,28,29,30,31,32,33,34,37,38,39,40,41,42,43};
+    private static final int PAGE_SIZE = 10;
+    private static final int[] ENTRY_SLOTS = {19,20,21,22,23,28,29,30,31,32};
     private static final String[] CATEGORIES = {"story", "nether", "end", "adventure", "husbandry"};
     private static final String[] CATEGORY_NAMES = {"Minecraft", "Nether", "The End", "Macera", "Çiftçilik"};
     private static final org.bukkit.Material[] CATEGORY_ICONS = {
